@@ -59,3 +59,38 @@ Place your ticket data in the `ticketsData` folder using JSON format:
   ]
 }
 ``` 
+
+## Example
+
+Here's a simple example of running the ticket analyzer:
+
+1. Start the application:
+```bash
+npm start
+```
+
+2. Select option 2 to categorize tickets:
+```
+=== Ticket Analyzer Tool ===
+
+Chosen file: tickets.json
+✔ Please select an option: 2. Categorize Data
+✔ Tickets loaded successfully
+✔ Tickets categorized successfully
+
+Categorized Tickets:
+Login Issues (1)
+- [T1001] Login issue
+
+Payment Problems (2)
+- [T1002] Payment failure
+- [T1003] No subject
+
+Bugs (1)
+- [T1005] Bug in dashboard
+
+Performance (1)
+- [T1006] Slow response
+
+Feature Requests (1)
+``` 

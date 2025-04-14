@@ -42,43 +42,34 @@ async function readTickets(filePath: string): Promise<Ticket[]> {
   }
 }
 
-// Categorizes tickets based on keywords. Tickets that do not match any
-// category are added to the "Other" category.
 function categorizeTickets(tickets: Ticket[]): Category[] {
   const spinner = ora('Categorizing tickets...').start();
 
-  // Define your categories and keywords.
   const categories: Category[] = [
     { name: 'Login Issues', keywords: ['login', 'password', 'authentication'], tickets: [] },
     { name: 'Payment Problems', keywords: ['payment', 'transaction', 'checkout'], tickets: [] },
     { name: 'Bugs', keywords: ['bug', 'error', 'crash'], tickets: [] },
     { name: 'Performance', keywords: ['slow', 'performance', 'response time'], tickets: [] },
     { name: 'Feature Requests', keywords: ['feature', 'request', 'enhancement'], tickets: [] },
-    { name: 'Other', keywords: [], tickets: [] } // Fallback category
+    { name: 'Other', keywords: [], tickets: [] }
   ];
 
-  // Utility to normalize text
   const normalizeText = (text: string): string =>
     text.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
 
-  // Process each ticket
   tickets.forEach(ticket => {
-    // Normalize ticket content.
     const subject = ticket.subject ? normalizeText(ticket.subject) : '';
     const description = ticket.description ? normalizeText(ticket.description) : '';
     const searchText = `${subject} ${description}`;
 
-    // Use scoring for each category (skipping 'Other' for score calculation)
     let bestCategory: Category | null = null;
     let maxScore = 0;
 
     categories.forEach(category => {
-      if (category.name === 'Other') return;  // Skip fallback category in scoring
+      if (category.name === 'Other') return;
 
-      // Initialize a score for this category
       let score = 0;
       category.keywords.forEach(keyword => {
-        // Create a regex that only matches whole words
         const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'g');
         const matches = searchText.match(regex);
         if (matches) {
@@ -86,14 +77,12 @@ function categorizeTickets(tickets: Ticket[]): Category[] {
         }
       });
 
-      // Update best category if this one has more keyword hits
       if (score > maxScore) {
         maxScore = score;
         bestCategory = category;
       }
     });
 
-    // If a category with a score exists, assign the ticket there; otherwise, use "Other"
     if (bestCategory && maxScore > 0) {
       (bestCategory as Category).tickets.push(ticket);
     } else {
@@ -108,7 +97,6 @@ function categorizeTickets(tickets: Ticket[]): Category[] {
   return categories
 }
 
-// Filters tickets that were created before the given date.
 function filterTicketsByDate(tickets: Ticket[], date: string): Ticket[] {
   const spinner = ora('Filtering tickets by date...').start()
   const filterDate = dayjs(date)
@@ -124,21 +112,17 @@ function filterTicketsByDate(tickets: Ticket[], date: string): Ticket[] {
   return filteredTickets
 }
 
-// Generates and displays a summary report including a table with counts per category
-// and a detailed list of tickets older than the specified date.
 function generateSummary(categories: Category[], oldTickets: Ticket[]) {
   console.log('\n')
   console.log(chalk.bold(figlet.textSync('Ticket Analyzer', { horizontalLayout: 'full' })))
   console.log('\n')
   
-  // Create table for category counts.
   const categoryTable = new Table({
     head: [chalk.cyan('Category'), chalk.cyan('Count')],
     style: { head: [], border: [] }
   })
   
   categories.forEach(category => {
-    // Color code based on count
     const color = category.tickets.length > 10
       ? chalk.red
       : (category.tickets.length > 5 ? chalk.yellow : chalk.green)
@@ -149,7 +133,6 @@ function generateSummary(categories: Category[], oldTickets: Ticket[]) {
   console.log(categoryTable.toString())
   console.log('\n')
   
-  // Display tickets older than specified date.
   console.log(chalk.bold('Tickets older than specified date:'))
   if (oldTickets.length === 0) {
     console.log(chalk.italic('No tickets found older than the specified date.'))
@@ -184,7 +167,6 @@ async function listFiles(): Promise<string[]> {
   try {
     const folderPath = path.join(process.cwd(), 'ticketsData')
     const files = await fs.readdir(folderPath)
-    // Filter only JSON files
     return files.filter(file => file.endsWith('.json')).map(file => path.join(folderPath, file))
   } catch (error) {
     console.error(chalk.red('Error reading ticketsData folder:'), error)
@@ -201,14 +183,12 @@ async function main() {
   while (true) {
     console.clear()
     console.log(chalk.bold.blue('\n=== Ticket Analyzer Tool ===\n'))
-    // Show current file selection status
     if (selectedFile) {
       console.log(chalk.green(`Chosen file: ${selectedFile ? path.basename(selectedFile) : 'none'}`))
     } else {
       console.log(chalk.yellow('Chosen file: no file chosen yet'))
     }
 
-    // Display the main menu options
     const menuAnswer = await inquirer.prompt([
       {
         type: 'list',
@@ -224,8 +204,6 @@ async function main() {
     ])
 
     switch (menuAnswer.menuOption) {
-
-      // Option 1: Choose File
       case 'chooseFile': {
         const files = await listFiles()
         if (files.length === 0) {
@@ -245,12 +223,10 @@ async function main() {
           selectedFile = fileChoice.fileSelected
           console.log(chalk.green(`File chosen: ${selectedFile ? path.basename(selectedFile) : 'none'}`))
         }
-        // Pause before returning to main menu
         await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to return to the main menu...' }])
         break
       }
 
-      // Option 2: Categorize Data
       case 'categorizeData': {
         if (!selectedFile) {
           console.log(chalk.red('No file chosen yet. Please choose a file first.'))
@@ -260,14 +236,13 @@ async function main() {
         try {
           const tickets = await readTickets(selectedFile)
           const categories = categorizeTickets(tickets)
-          // Display categorized data
           console.log(chalk.bold('\nCategorized Tickets:'))
           categories.forEach(category => {
             console.log(chalk.underline(`${category.name} (${category.tickets.length})`))
             category.tickets.forEach(ticket => {
               console.log(`- [${ticket.ticketId}] ${ticket.subject || 'No subject'}`)
             })
-            console.log('') // space between categories
+            console.log('')
           })
         } catch (error) {
           console.log(chalk.red('Error processing file:'), error instanceof Error ? error.message : error)
@@ -276,7 +251,6 @@ async function main() {
         break
       }
 
-      // Option 3: Summary Report
       case 'summaryReport': {
         if (!selectedFile) {
           console.log(chalk.red('No file chosen yet. Please choose a file first.'))
@@ -313,7 +287,6 @@ async function main() {
             ])
             filterDate = response.customDate
           } else {
-            // Calculate date based on selected option
             filterDate = dayjs().subtract(1, dateOption).format('YYYY-MM-DD')
           }
           
@@ -328,7 +301,6 @@ async function main() {
         break
       }
 
-      // Option 4: Exit
       case 'exit': {
         console.log(chalk.green('Exiting the CLI. Thank you for using Ticket Analyzer!'))
         process.exit(0)
