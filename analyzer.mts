@@ -6,6 +6,7 @@ import ora from 'ora'
 import Table from 'cli-table3'
 import figlet from 'figlet'
 import path from 'path'
+import { parse } from 'csv-parse/sync'
 
 // ---------------------------------------------------------------------------
 // Type Definitions
@@ -28,14 +29,33 @@ interface Category {
 // Utility Functions
 // ---------------------------------------------------------------------------
 
-// Reads tickets from a JSON file and returns an array of tickets.
-async function readTickets(filePath: string): Promise<Ticket[]> {
+// Reads tickets from a JSON or CSV file and returns an array of tickets.
+async function readTickets(filePath: string, format: 'json' | 'csv'): Promise<Ticket[]> {
   const spinner = ora('Reading tickets file...').start()
   try {
     const data = await fs.readFile(filePath, 'utf-8')
-    const json = JSON.parse(data)
+    let tickets: Ticket[]
+    
+    if (format === 'json') {
+      const json = JSON.parse(data)
+      tickets = json.tickets as Ticket[]
+    } else {
+      // Parse CSV data
+      const records = parse(data, {
+        columns: true,
+        skip_empty_lines: true
+      })
+      tickets = records.map((record: any) => ({
+        ticketId: record.ticketId || record.id,
+        subject: record.subject || '',
+        description: record.description || '',
+        status: record.status || 'unknown',
+        created_at: record.created_at || record.created || record.date
+      }))
+    }
+    
     spinner.succeed('Tickets loaded successfully')
-    return json.tickets as Ticket[]
+    return tickets
   } catch (error) {
     spinner.fail('Failed to read or parse the file')
     throw new Error('Failed to read or parse the file.')
@@ -162,12 +182,14 @@ function generateSummary(categories: Category[], oldTickets: Ticket[]) {
   console.log('\n')
 }
 
-// Lists available JSON files from the folder "ticketsData".
-async function listFiles(): Promise<string[]> {
+// Lists available files from the folder "ticketsData".
+async function listFiles(format: 'json' | 'csv'): Promise<string[]> {
   try {
     const folderPath = path.join(process.cwd(), 'ticketsData')
     const files = await fs.readdir(folderPath)
-    return files.filter(file => file.endsWith('.json')).map(file => path.join(folderPath, file))
+    return files
+      .filter(file => format === 'json' ? file.endsWith('.json') : file.endsWith('.csv'))
+      .map(file => path.join(folderPath, file))
   } catch (error) {
     console.error(chalk.red('Error reading ticketsData folder:'), error)
     return []
@@ -179,6 +201,7 @@ async function listFiles(): Promise<string[]> {
 // ---------------------------------------------------------------------------
 async function main() {
   let selectedFile: string | null = null
+  let selectedFormat: 'json' | 'csv' = 'json' // Initialize with a default value
 
   while (true) {
     console.clear()
@@ -205,9 +228,21 @@ async function main() {
 
     switch (menuAnswer.menuOption) {
       case 'chooseFile': {
-        const files = await listFiles()
+        const formatAnswer = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'format',
+            message: 'Select file format:',
+            choices: [
+              { name: 'JSON', value: 'json' },
+              { name: 'CSV', value: 'csv' }
+            ]
+          }
+        ])
+
+        const files = await listFiles(formatAnswer.format)
         if (files.length === 0) {
-          console.log(chalk.red('No files available in the tickets_data folder.'))
+          console.log(chalk.red(`No ${formatAnswer.format.toUpperCase()} files available in the tickets_data folder.`))
         } else {
           const fileChoice = await inquirer.prompt([
             {
@@ -221,6 +256,7 @@ async function main() {
             }
           ])
           selectedFile = fileChoice.fileSelected
+          selectedFormat = formatAnswer.format
           console.log(chalk.green(`File chosen: ${selectedFile ? path.basename(selectedFile) : 'none'}`))
         }
         await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to return to the main menu...' }])
@@ -234,7 +270,7 @@ async function main() {
           break
         }
         try {
-          const tickets = await readTickets(selectedFile)
+          const tickets = await readTickets(selectedFile, selectedFormat)
           const categories = categorizeTickets(tickets)
           console.log(chalk.bold('\nCategorized Tickets:'))
           categories.forEach(category => {
@@ -290,7 +326,7 @@ async function main() {
             filterDate = dayjs().subtract(1, dateOption).format('YYYY-MM-DD')
           }
           
-          const tickets = await readTickets(selectedFile)
+          const tickets = await readTickets(selectedFile, selectedFormat)
           const categories = categorizeTickets(tickets)
           const oldTickets = filterTicketsByDate(tickets, filterDate)
           generateSummary(categories, oldTickets)

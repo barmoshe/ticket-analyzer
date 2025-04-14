@@ -1,0 +1,8 @@
+ticketId,subject,description,status,created_at
+T1001,Login issue,User cannot login due to forgotten password.,open,2025-03-25T10:30:00Z
+T1002,Payment failure,Payment did not go through for order #456.,closed,2025-03-20
+T1003,"",Error 500 encountered on checkout page.,in progress,2025/03/22 12:00:00
+T1004,,Missing subject field example.,open,2025-03-23T09:00:00Z
+T1005,Bug in dashboard,Dashboard does not update automatically.,invalid,Invalid Date
+T1006,Slow response,API response time exceeds 5 seconds.,pending,2025-03-24T15:45:00Z
+T1007,Feature request: Dark mode,Add dark mode option for the support portal.,open,2025-03-26T08:15:00Z

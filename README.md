@@ -1,6 +1,6 @@
 # Support Ticket Analyzer - Bar Moshe
 
-A command-line tool that analyzes and categorizes support tickets from JSON files.
+A command-line tool that analyzes and categorizes support tickets from JSON or CSV files.
 
 
 ## Setup
@@ -20,7 +20,7 @@ npm start
 
 ## Features
 
-- Parses JSON files containing support tickets
+- Parses JSON or CSV files containing support tickets
 - Categorizes tickets by common keywords (login, payment, bug, etc.)
 - Generates summary reports including:
   - Ticket counts per category
@@ -29,6 +29,7 @@ npm start
 
 ## Input Data Format
 
+### JSON Format
 Create a JSON file with the following structure:
 
 ```json
@@ -43,6 +44,21 @@ Create a JSON file with the following structure:
     }
   ]
 }
+```
+
+### CSV Format
+Create a CSV file with the following columns (headers are required):
+- ticketId (or id)
+- subject
+- description
+- status
+- created_at (or created or date)
+
+Example CSV:
+```csv
+ticketId,subject,description,status,created_at
+T1001,Login issue,User cannot login due to forgotten password.,open,2025-03-25T10:30:00Z
+T1002,Payment failure,Payment did not go through for order #456.,closed,2025-03-20
 ```
 
 ```
