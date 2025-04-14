@@ -60,6 +60,7 @@ ticketId,subject,description,status,created_at
 T1001,Login issue,User cannot login due to forgotten password.,open,2025-03-25T10:30:00Z
 T1002,Payment failure,Payment did not go through for order #456.,closed,2025-03-20
 ```
+![ezgif-6b252062d8bcdf](https://github.com/user-attachments/assets/aadcbf21-4c9e-49dc-8589-f081f107b0ab)
 
 ```
   _____   _          _             _          _                      _                             
