@@ -1,0 +1,234 @@
+# Home Assignment - Junior Full Stack
+
+Thank you for your interest in joining our team!
+
+As part of the hiring process, we have prepared a home assignment to help us evaluate your skills in a practical way. We understand that candidates have different strengths and experiences, so we are giving you **three assignment options** to choose from. You can select the one that best aligns with your expertise and interests.
+
+### **How It Works**
+
+- Review the three assignment options below.
+- Choose **one** assignment to complete.
+- Follow the provided instructions and submit your work within the given timeframe.
+- Your solution will be evaluated based on **code quality, functionality, best practices, and creativity**.
+
+This assignment is designed to be **practical and manageable**, allowing you to showcase your skills without taking too much of your time. If you have any questions, feel free to reach out.
+
+Good luck! We’re excited to see what you build. 🚀
+
+---
+
+### Option 1: Support Ticket Analyzer
+
+**Task:**
+
+Create a command-line tool or simple script that reads a JSON (or CSV) file containing a list of support tickets. Each ticket can include fields such as ticket ID, subject, description, and created_at.
+
+**Requirements:**
+
+- **Data Processing:** Parse the file and categorize tickets by common keywords (e.g., “login”, “payment”, “bug”).
+- **Summary Report:** Output a summary with counts per category and list tickets older than a user-specified date.
+- **Technologies:** Use your preferred language and basic file I/O; regular expressions or simple keyword matching are sufficient.
+
+**What It Tests:**
+
+Basic data manipulation, file I/O, and text processing.
+
+```jsx
+{
+  "tickets": [
+    {
+      "ticketId": "T1001",
+      "subject": "Login issue",
+      "description": "User cannot login due to forgotten password.",
+      "status": "open",
+      "created_at": "2025-03-25T10:30:00Z"
+    },
+    {
+      "ticketId": "T1002",
+      "subject": "Payment failure",
+      "description": "Payment did not go through for order #456.",
+      "status": "closed",
+      "created_at": "2025-03-20"
+    },
+    {
+      "ticketId": "T1003",
+      "subject": "",
+      "description": "Error 500 encountered on checkout page.",
+      "status": "in progress",
+      "created_at": "2025/03/22 12:00:00"
+    },
+    {
+      "ticketId": "T1004",
+      "description": "Missing subject field example.",
+      "status": "open",
+      "created_at": "2025-03-23T09:00:00Z"
+    },
+    {
+      "ticketId": "T1005",
+      "subject": "Bug in dashboard",
+      "description": "Dashboard does not update automatically.",
+      "status": "invalid",
+      "created_at": "Invalid Date"
+    },
+    {
+      "ticketId": "T1006",
+      "subject": "Slow response",
+      "description": "API response time exceeds 5 seconds.",
+      "status": "pending",
+      "created_at": "2025-03-24T15:45:00Z"
+    },
+    {
+      "ticketId": "T1007",
+      "subject": "Feature request: Dark mode",
+      "description": "Add dark mode option for the support portal.",
+      "status": "open",
+      "created_at": "2025-03-26T08:15:00Z"
+    }
+  ]
+}
+
+```
+
+---
+
+### Option 2: Knowledge Base Manager
+
+**Task:**
+
+Develop a lightweight web application or command-line tool that simulates a support knowledge base. This knowledge base will store help articles (each with a title, content, and tags) that can be created, updated, and searched.
+
+**Requirements:**
+
+- **CRUD Operations:** Implement functionality to add, edit, and delete articles.
+- **Search:** Allow the user to search for articles by keyword or tag.
+- **Storage:** Use local filesystem storage (e.g., JSON files) or a local database instance via docker-compose.
+- **Interface:** A minimal web UI (or CLI-based menu) is sufficient.
+
+**What It Tests:**
+
+Basic web (or CLI) development skills, CRUD operations, and simple search functionality.
+
+```jsx
+{
+  "articles": [
+    {
+      "id": "A1",
+      "title": "How to Reset Your Password",
+      "content": "Follow these steps to reset your password...",
+      "tags": ["account", "password", "security"]
+    },
+    {
+      "id": "A2",
+      "title": "Troubleshooting Login Issues",
+      "content": "If you experience issues logging in, try the following steps...",
+      "tags": ["login", "troubleshooting"]
+    },
+    {
+      "id": "A3",
+      "title": "Payment Processing Guide",
+      "content": "",
+      "tags": ["payment", "checkout"]
+    },
+    {
+      "id": "A4",
+      "title": "",
+      "content": "This article explains how to configure email notifications.",
+      "tags": ["notifications", "email"]
+    },
+    {
+      "id": "A5",
+      "title": "Using the Dashboard",
+      "content": "Learn how to navigate and utilize the dashboard effectively.",
+      "tags": "dashboard"
+    },
+    {
+      "id": "A6",
+      "title": "FAQ",
+      "content": "Common questions and answers about our support system.",
+      "tags": []
+    }
+  ]
+}
+
+```
+
+---
+
+### Option 3: Minimal Ticket Dashboard
+
+**Task:**
+
+Build a small web dashboard to display and update support tickets stored locally.
+
+**Requirements:**
+
+- **Display Tickets:** Create a page that lists support tickets with fields like ticket ID, subject, and status (e.g., open/closed).
+- **Filtering:** Include functionality to filter tickets by status.
+- **Update Status:** Provide a simple mechanism (button or form) to change a ticket’s status.
+- **Storage:** Use a local file (JSON) or a lightweight database (e.g., SQLite via docker-compose).
+
+**What It Tests:**
+
+Basic full-stack development, REST API (or similar), simple front-end display, and file-based or local database storage.
+
+```jsx
+{
+  "dashboardTickets": [
+    {
+      "id": "DT1",
+      "title": "Server Downtime",
+      "status": "open",
+      "priority": "high",
+      "created": "2025-03-25T11:00:00Z"
+    },
+    {
+      "id": "DT2",
+      "title": "Bug in Report Generation",
+      "status": "resolved",
+      "priority": "medium",
+      "created": "2025-03-21T14:20:00Z"
+    },
+    {
+      "id": "DT3",
+      "title": "UI Glitch",
+      "status": "O P E N",
+      "priority": "low",
+      "created": "2025-03-22T08:50:00Z"
+    },
+    {
+      "id": "DT4",
+      "title": "Data Sync Issue",
+      "status": "closed",
+      "priority": "unknown",
+      "created": "March 23, 2025 09:30"
+    },
+    {
+      "id": "DT5",
+      "title": "Feature Request: Export Data",
+      "status": "open",
+      "priority": "high",
+      "created": "2025-03-26T07:45:00Z"
+    },
+    {
+      "id": "DT6",
+      "title": "Performance Lag",
+      "status": "pending",
+      "priority": "",
+      "created": "2025-03-24T17:00:00Z"
+    }
+  ]
+}
+
+```
+
+---
+
+**Submission instructions:**
+
+- Submit your code in a Github repository.
+- Include a [README.md](http://README.md) with instructions on how to setup and run your application.
+- When you’re done, please send your project, along with your linkedin profile, to aviram+dev@quack.ai.
+
+**Time limit:**
+
+Do not spend more than 3 hours on this task.
